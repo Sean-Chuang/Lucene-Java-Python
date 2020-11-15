@@ -1,4 +1,8 @@
 # Lucene-Java-Python
+### Goal:
+This project is a demo for Lucene index and search in Java and Python.
+ And simple check index data could be read correctly in different language.
+  
 ### Project Structure:
 ```
 .
