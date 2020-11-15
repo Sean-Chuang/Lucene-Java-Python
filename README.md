@@ -16,6 +16,7 @@
     └── retriever.py
 ```
 ### Comment:
+***Q: Could we use Java to read the index created by Python?***
 - Lucene Codec must be compatible.
 (Make sure java & python lucene version are same.)
 
