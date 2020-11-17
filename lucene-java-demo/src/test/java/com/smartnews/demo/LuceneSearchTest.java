@@ -24,6 +24,6 @@ public class LuceneSearchTest
         //Search by item and label
         TopDocs foundDocs = LuceneReadIndexDemo.searchItemID(Arrays.asList("item_A", "item_B"), "Adidas", searcher);
         System.out.println("Total Results : " + foundDocs.totalHits);
-        assertTrue( foundDocs.totalHits.value == 2);
+        assertTrue( foundDocs.totalHits == 2);
     }
 }

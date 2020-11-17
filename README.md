@@ -24,6 +24,8 @@ This project is a demo for Lucene index and search in Java and Python.
 - Lucene Codec must be compatible.
 (Make sure java & python lucene version are same.)
 
+***Right now datafeed lucene version is `7.4.0`***
+
 ### Refence:
 - https://stackoverflow.com/questions/14376513/installing-pylucene-on-a-mac
 - https://graus.nu/blog/pylucene-4-0-in-60-seconds-tutorial/
