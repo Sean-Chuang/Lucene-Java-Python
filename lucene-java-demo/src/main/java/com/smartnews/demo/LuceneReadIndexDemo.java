@@ -1,9 +1,7 @@
 package com.smartnews.demo;
 
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.FSDirectory;
 
@@ -15,6 +13,9 @@ import java.util.List;
 public class LuceneReadIndexDemo {
     public static IndexSearcher createSearcher(String dataDir) throws IOException {
         FSDirectory dir = FSDirectory.open(Paths.get(dataDir));
+//        IndexWriterConfig config = new IndexWriterConfig();
+//        config.setCodec(new Lucene70Codec());
+//        IndexWriter writer = new IndexWriter(dir, config);
         IndexReader reader = DirectoryReader.open(dir);
         IndexSearcher searcher = new IndexSearcher(reader);
         return searcher;
