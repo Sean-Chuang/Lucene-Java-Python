@@ -8,11 +8,11 @@ brew cask install adoptopenjdk13
 brew install ant
 
 # set JAVA_HOME
-export JAVA_HOME=$(/usr/libexec/java_home)
+export JAVA_HOME=$(/usr/libexec/java_home -v1.8)
 
 # Download pylucene 
 #wget https://downloads.apache.org/lucene/pylucene/pylucene-8.6.1-src.tar.gz
-wget -O pylucene.tar.gz https://archive.apache.org/dist/lucene/pylucene/pylucene-6.5.0-src.tar.gz
+wget -O pylucene.tar.gz https://archive.apache.org/dist/lucene/pylucene/pylucene-7.4.0-src.tar.gz
 mkdir pylucene
 tar -zxvf pylucene.tar.gz -C pylucene --strip-components=1
 

@@ -3,15 +3,15 @@ import sys
 import lucene
  
 from java.io import File
-from org.apache.lucene.analysis.core import WhitespaceAnalyzer
 from org.apache.lucene.document import Document, Field, StringField, StoredField
 from org.apache.lucene.index import IndexWriter, IndexWriterConfig
 from org.apache.lucene.store import SimpleFSDirectory
 from org.apache.lucene.codecs import Codec
- 
+
 def createWriter(index_dir):
     indexDir = SimpleFSDirectory(File(index_dir).toPath())
     writerConfig = IndexWriterConfig()
+    print(Codec.availableCodecs());
     print(f"Codec : {writerConfig.getCodec()}")
     writer = IndexWriter(indexDir, writerConfig)
     return writer
@@ -28,7 +28,7 @@ def createDocument(item_id, label, viewSimilar, viewProspective):
 
 if __name__ == "__main__":
     lucene.initVM(vmargs=['-Djava.awt.headless=true'])
-    index_dir = "../data/python/itemSimilarityIndex"
+    index_dir = "../../data/python/itemSimilarityIndex"
 
     writer = createWriter(index_dir)
 

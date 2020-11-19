@@ -18,7 +18,7 @@ def createSearcher(index_dir):
 
 if __name__ == "__main__":
     lucene.initVM(vmargs=['-Djava.awt.headless=true'])
-    index_dir = "../data/python/itemSimilarityIndex"
+    index_dir = "../../data/python/itemSimilarityIndex"
 
     searcher = createSearcher(index_dir)
     analyzer = WhitespaceAnalyzer()
