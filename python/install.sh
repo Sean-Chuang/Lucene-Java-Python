@@ -17,12 +17,17 @@ mkdir pylucene
 tar -zxvf pylucene.tar.gz -C pylucene --strip-components=1
 
 # install jcc
+pip3 install jcc
+# OR
 cd pylucene
 cd jcc
 python3 setup.py build
 python3 setup.py install
 
+
 # install pylucene
+# - clean ivy cache
+rm -rf ~/.ivy2/cache
 # - modify the makefile
 cd ../
 sed -i "bs" "1i\\

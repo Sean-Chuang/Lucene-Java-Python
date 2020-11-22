@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 import sys
 import json
+import time
 from decimal import Decimal
 from collections import OrderedDict
 import hashlib
 
 import lucene
 from java.io import File
-from org.apache.lucene.document import Document, Field, StringField, StoredField
+from org.apache.lucene.document import Document, Field, LongPoint, StringField, StoredField
 from org.apache.lucene.index import IndexWriter, IndexWriterConfig, DirectoryReader
 from org.apache.lucene.index import Term
-from org.apache.lucene.search import IndexSearcher
+from org.apache.lucene.search import IndexSearcher, TermQuery, BooleanQuery, BooleanClause
 from org.apache.lucene.store import SimpleFSDirectory
 from org.apache.lucene.analysis.core import WhitespaceAnalyzer
 from org.apache.lucene.queryparser.classic import QueryParser
@@ -42,14 +43,17 @@ def get_searcher(index_dir):
         searcher = None
     return searcher
 
-def create_doc(item_id, label, viewSimilar, viewProspective):
+def create_doc(item_id, label, viewSimilar, viewProspective, model="default"):
     doc = Document()
+    now_time = int(time.time())
     _id = hashlib.md5(f"{label}_{item_id}".encode('utf-8')).hexdigest()
     doc.add(StringField("id", _id, Field.Store.NO))
-    doc.add(StringField('itemID', item_id, Field.Store.YES))
-    doc.add(StringField('label', label, Field.Store.YES))
+    doc.add(StringField("itemID", item_id, Field.Store.YES))
+    doc.add(StringField("label", label, Field.Store.YES))
     doc.add(StoredField("viewSimilar", viewSimilar))
     doc.add(StoredField("viewProspective", viewProspective))
+    doc.add(StringField("model", model, Field.Store.YES))
+    doc.add(StringField("ttl", str(now_time), Field.Store.NO))
     return _id, doc
 
 def query(searcher, query_str, max=10):
@@ -98,8 +102,28 @@ def build_prospective_item_dict(prospective_list):
             prospective_dict[prospective_label] = order_dict
     return prospective_dict
 
-def query_example(searcher, label, item_list):
-    query_str = f"itemID:({' '.join(item_list)}) AND label:{label}"
+def delete_old_ttl(searcher, writer, label):
+    if searcher is None:
+        return
+
+    now_time = int(time.time())
+
+    # mainQuery = BooleanQuery();
+    # label_filter = TermQuery(Term("label", label))
+    # ttl_query = LongPoint.newRangeQuery("ttl", 0, now_time)
+    # mainQuery.add(label_filter, BooleanClause.Occur.MUST)
+    # mainQuery.add(ttl_query, BooleanClause.Occur.MUST)
+    # hits = searcher.search(mainQuery, 10)
+
+    query_str = f"ttl:[0 TO {now_time}] AND label:{label}"
+    hits = query(searcher, query_str, max=10)
+
+    print(f"Found {hits.totalHits} document(s) are expired.")
+    writer.deleteDocuments(q_parser.parse(query_str))
+    writer.commit()
+
+def query_example(searcher, label, item_list, model='default'):
+    query_str = f"itemID:({' '.join(item_list)}) AND label:{label} AND model:{model}"
     hits = query(searcher, query_str, max=len(item_list))
 
     for hit in hits.scoreDocs:
@@ -112,6 +136,9 @@ def main(i2i_prospective_data_file, index_dir, label):
     writer = get_writer(index_dir)
     searcher = get_searcher(index_dir)
     index_stats(searcher, label)
+
+    # Remove ttl expired.
+    delete_old_ttl(searcher, writer, label)
 
     with open(i2i_prospective_data_file, 'r') as in_f:
         for idx, line in enumerate(in_f):
@@ -136,7 +163,7 @@ def main(i2i_prospective_data_file, index_dir, label):
             else:
                 print(f"There is something wrong :\n{line}")
 
-    print(f"Total line : {idx}")
+    print(f"Total line : {idx+1}, total docs: {len(total_ids)}")
     writer.commit()
     writer.close()
 
