@@ -26,7 +26,7 @@ public class LuceneReadIndexDemo {
 
         BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder().setMinimumNumberShouldMatch(1);
         for(String itemID:itemList) {
-            bqBuilder.add(new TermQuery(new Term("itemID", itemID)), BooleanClause.Occur.SHOULD);
+            bqBuilder.add(new TermQuery(new Term("item_id", itemID)), BooleanClause.Occur.SHOULD);
         }
         bqBuilder.add(new TermQuery(new Term("label", label)), BooleanClause.Occur.FILTER);
         System.out.println("Query: " + bqBuilder.build().toString());
@@ -38,8 +38,8 @@ public class LuceneReadIndexDemo {
 
         for (ScoreDoc scoredoc:hits.scoreDocs) {
             Document doc = searcher.doc(scoredoc.doc);
-            System.out.println("itemID: "+doc.get("itemID"));
-            System.out.println(Arrays.toString(doc.getValues("viewSimilar")));
+            System.out.println("item_id: "+doc.get("item_id"));
+            System.out.println(Arrays.toString(doc.getValues("view_similar")));
             System.out.println("score: "+ scoredoc.score);
         }
         return hits;
@@ -47,11 +47,12 @@ public class LuceneReadIndexDemo {
 
     public static void main(String[] args) throws Exception
     {
-        String indexDir = "data/java/itemSimilarityIndex";
+        String indexDir = "data/i2i_prospective_index";
         IndexSearcher searcher = createSearcher(indexDir);
+        System.out.println(searcher.count(new TermQuery(new Term("label", "rakuten_shopping"))));
 
         //Search by item and label
-        TopDocs foundDocs = searchItemID(Arrays.asList("item_A", "item_B"), "Adidas", searcher);
+        TopDocs foundDocs = searchItemID(Arrays.asList("0000000000063531", "0000000000076492"), "psfa", searcher);
         System.out.println("Total Results :: " + foundDocs.totalHits);
 
         for (ScoreDoc sd : foundDocs.scoreDocs) {

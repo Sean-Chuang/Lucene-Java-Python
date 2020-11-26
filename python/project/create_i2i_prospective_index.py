@@ -34,13 +34,9 @@ def get_writer(index_dir):
     writer = IndexWriter(indexDir, writerConfig)
     return writer
 
-def get_searcher(index_dir):
-    indexDir = SimpleFSDirectory(File(index_dir).toPath())
-    try:
-        reader = DirectoryReader.open(indexDir)
-        searcher = IndexSearcher(reader)
-    except:
-        searcher = None
+def get_searcher(writer):
+    reader = DirectoryReader.open(writer)
+    searcher = IndexSearcher(reader)
     return searcher
 
 def create_doc(item_id, label, viewSimilar, viewProspective, model="default"):
@@ -48,10 +44,10 @@ def create_doc(item_id, label, viewSimilar, viewProspective, model="default"):
     now_time = int(time.time())
     _id = hashlib.md5(f"{label}_{item_id}".encode('utf-8')).hexdigest()
     doc.add(StringField("id", _id, Field.Store.NO))
-    doc.add(StringField("itemID", item_id, Field.Store.YES))
+    doc.add(StringField("item_id", item_id, Field.Store.YES))
     doc.add(StringField("label", label, Field.Store.YES))
-    doc.add(StoredField("viewSimilar", viewSimilar))
-    doc.add(StoredField("viewProspective", viewProspective))
+    doc.add(StoredField("view_similar", viewSimilar))
+    doc.add(StoredField("view_prospective", viewProspective))
     doc.add(StringField("model", model, Field.Store.YES))
     doc.add(StringField("ttl", str(now_time), Field.Store.NO))
     return _id, doc
@@ -61,6 +57,12 @@ def query(searcher, query_str, max=10):
     hits = searcher.search(query_cmd, max)
     print(f"Found {hits.totalHits} document(s) that matched query :'{query_cmd}'")
     return hits
+
+def count_docs(searcher, query_str):
+    query_cmd = q_parser.parse(query_str)
+    total = searcher.count(query_cmd)
+    print(f"Found {total} document(s) that matched query :'{query_cmd}'")
+    return total
 
 def index_stats(searcher, label):
     if searcher is None:
@@ -134,7 +136,7 @@ def query_example(searcher, label, item_list, model='default'):
 
 def main(i2i_prospective_data_file, index_dir, label):
     writer = get_writer(index_dir)
-    searcher = get_searcher(index_dir)
+    searcher = get_searcher(writer)
     index_stats(searcher, label)
 
     # Remove ttl expired.
@@ -163,15 +165,16 @@ def main(i2i_prospective_data_file, index_dir, label):
             else:
                 print(f"There is something wrong :\n{line}")
 
-    print(f"Total line : {idx+1}, total docs: {len(total_ids)}")
+    print(f"Total line : {idx+1}")
     writer.commit()
-    writer.close()
 
-    searcher = get_searcher(index_dir)
+    searcher = get_searcher(writer)
     index_stats(searcher, label)
 
     query_example(searcher, label, ['120381492109', '123070697922', '167875200989', '138571497872'])
 
+    searcher.getIndexReader().close()
+    writer.close()
 
 if __name__ == '__main__':
     label = 'psfa'
