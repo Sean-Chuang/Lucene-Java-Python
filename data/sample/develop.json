@@ -1,0 +1,73 @@
+{
+    "dev_dynamic_ads_item_similarity": [
+        {
+            "PutRequest": {
+                "Item": {
+                    "item_id": {"S": "66008497"},
+                    "label": {"S": "summo"},
+                    "view_similar": {"M": {
+                      "66008497": { "N": "0.99" },
+                      "88795192": { "N": "0.02" },
+                      "not_exist_id_4": { "N": "0.02" }
+                    }}
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "item_id": {"S": "88659998"},
+                    "label": {"S": "summo"},
+                    "view_similar": {"M": {
+                      "87064791": { "N": "0.03" },
+                      "80579743": { "N": "0.035" },
+                      "not_exist_id_5": { "N": "0.02" }
+                    }}
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "item_id": {"S": "shirohato:10143819"},
+                    "label": {"S": "rakuten_shopping"},
+                    "view_similar": {"M": {
+                      "blessyou:10041924": { "N": "0.09" },
+                      "chgardens:10048913": { "N": "0.05" },
+                      "not_exist_id:3": { "N": "0.04" }
+                    }}
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "item_id": {"S": "gunze:10035866"},
+                    "label": {"S": "rakuten_shopping"},
+                    "view_similar": {"M": {
+                      "gunze:10035866": { "N": "0.9" },
+                      "blessyou:10043920": { "N": "0.1" },
+                      "blessyou:10043681": { "N": "0.2" },
+                      "blessyou:10043404": { "N": "0.3" },
+                      "not_exist_id:4": { "N": "0.5" }
+                    }}
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "item_id": {"S": "chgardens:10049453"},
+                    "label": {"S": "rakuten_shopping"},
+                    "view_similar": {"M": {
+                      "chgardens:10049453": { "N": "1.0000" },
+                      "blessyou:10042750": { "N": "0.00104" },
+                      "blessyou:10038498": { "N": "0.00102" },
+                      "blessyou:10036758": { "N": "0.00103" },
+                      "not_exist_id:5": { "N": "0.05" }
+                    }}
+                }
+            }
+        }
+    ]
+}
